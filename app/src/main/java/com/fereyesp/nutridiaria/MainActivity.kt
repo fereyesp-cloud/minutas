@@ -41,6 +41,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.RadioButton
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+
 
 val minutas = listOf(
     Minuta(
@@ -206,8 +216,13 @@ fun NutriDiarioApp(){
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PantallaRegistro(irALogin: () -> Unit) {
+    var nombre by remember { mutableStateOf("") }
+    var aceptaTerminos by remember { mutableStateOf(false) }
+    var tipoUsuario by remember { mutableStateOf("Dueña de casa") }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -220,12 +235,69 @@ fun PantallaRegistro(irALogin: () -> Unit) {
         }
     ) { innerPadding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(innerPadding).padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Center
         ) {
-            Text("formulario de registro")
+            OutlinedTextField(
+                value = nombre,
+                onValueChange = { nombre = it },
+                label = { Text("Nombre completo") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
             Spacer(modifier = Modifier.height(16.dp))
+
+            Text("Tipo de usuario", style = MaterialTheme.typography.labelLarge)
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                RadioButton(
+                    selected = tipoUsuario == "Dueña de casa",
+                    onClick = { tipoUsuario = "Dueña de casa" }
+                )
+                Text("Dueña de casa")
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                RadioButton(
+                    selected = tipoUsuario == "Nutricionista",
+                    onClick = { tipoUsuario = "Nutricionista" }
+                )
+                Text("Nutricionista")
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Checkbox(
+                    checked = aceptaTerminos,
+                    onCheckedChange = { aceptaTerminos = it }
+                )
+                Text("Acepto los términos y condiciones")
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = {},
+                enabled = aceptaTerminos,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Registrarme")
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             TextButton(onClick = irALogin) {
                 Text("Volver a inicio de sesión")
             }
@@ -249,7 +321,7 @@ fun PantallaRecuperar(irALogin: () -> Unit) {
         Column(
             modifier = Modifier.fillMaxSize().padding(innerPadding).padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement =  Arrangement.Top,
         ) {
             Text("formulario de recuperación")
             Spacer(modifier = Modifier.height(16.dp))
@@ -261,6 +333,9 @@ fun PantallaRecuperar(irALogin: () -> Unit) {
 }
 @Composable
 fun PantallaMinuta() {
+
+    var diaSeleccionado by remember { mutableStateOf("Selecciona un día") }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -272,35 +347,87 @@ fun PantallaMinuta() {
             )
         }
     ) { innerPadding ->
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(16.dp)
         ) {
-            items(minutas) { receta ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = receta.dia,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Text(
-                            text = receta.titulo,
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = receta.recomendacionNutricional,
-                            style = MaterialTheme.typography.bodySmall
-                        )
+            SelectorDia(
+                diaSeleccionado = diaSeleccionado,
+                onDiaSeleccionado = { diaSeleccionado = it }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(minutas.filter { it.dia == diaSeleccionado }) { receta ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(
+                                text = receta.dia,
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Text(
+                                text = receta.titulo,
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = receta.recomendacionNutricional,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
                     }
                 }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SelectorDia(
+    diaSeleccionado: String,
+    onDiaSeleccionado: (String) -> Unit
+) {
+    var expandido by remember { mutableStateOf(false) }
+    val dias = listOf("Lunes", "Martes", "Miércoles", "Jueves", "Viernes")
+
+    ExposedDropdownMenuBox(
+        expanded = expandido,
+        onExpandedChange = { expandido = !expandido }
+    ) {
+        OutlinedTextField(
+            value = diaSeleccionado,
+            onValueChange = {},
+            readOnly = true,
+            label = { Text("Selecciona un día") },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandido) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor()
+        )
+
+        ExposedDropdownMenu(
+            expanded = expandido,
+            onDismissRequest = { expandido = false }
+        ) {
+            dias.forEach { dia ->
+                DropdownMenuItem(
+                    text = { Text(dia) },
+                    onClick = {
+                        onDiaSeleccionado(dia)
+                        expandido = false
+                    }
+                )
             }
         }
     }
