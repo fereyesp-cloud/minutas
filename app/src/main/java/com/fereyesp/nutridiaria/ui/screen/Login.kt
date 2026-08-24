@@ -61,6 +61,10 @@ fun Login(
     var mensajeError by remember { mutableStateOf(value = "") }
     var mostrarError by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    /**
+     *Modal
+     */
+
     if (mostrarError) {
         AlertDialog(
             onDismissRequest = { mostrarError = false },

@@ -35,6 +35,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import android.media.AudioManager
 import android.media.ToneGenerator
 
+/**
+ * Pantalla recuperar contraseña
+ */
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PantallaRegistro(irALogin: () -> Unit) {
@@ -45,6 +49,10 @@ fun PantallaRegistro(irALogin: () -> Unit) {
     var tipoUsuario by remember { mutableStateOf("Dueña de casa") }
     var mostrarExito by remember { mutableStateOf(false) }
 
+    /**
+     * Modal de exito
+     */
+
     if (mostrarExito) {
         AlertDialog(
             onDismissRequest = { mostrarExito = false },
@@ -53,7 +61,7 @@ fun PantallaRegistro(irALogin: () -> Unit) {
             confirmButton = {
                 TextButton(onClick = {
                     mostrarExito = false
-                    irALogin()  // opcional: redirige de vuelta al login después de aceptar
+                    irALogin()
                 }) {
                     Text("Aceptar")
                 }

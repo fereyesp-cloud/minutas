@@ -41,6 +41,9 @@ fun PantallaRecuperar(irALogin: () -> Unit) {
     var mostrarExito by remember { mutableStateOf(false) }
     var correo by remember { mutableStateOf("") }
 
+    /*
+    /Modal de exito
+     */
     if (mostrarExito) {
         AlertDialog(
             onDismissRequest = { mostrarExito = false },
@@ -49,7 +52,7 @@ fun PantallaRecuperar(irALogin: () -> Unit) {
             confirmButton = {
                 TextButton(onClick = {
                     mostrarExito = false
-                    irALogin()  // opcional: redirige de vuelta al login después de aceptar
+                    irALogin()
                 }) {
                     Text("Aceptar")
                 }
