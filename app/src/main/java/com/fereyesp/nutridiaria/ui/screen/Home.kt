@@ -63,10 +63,17 @@ fun PantallaMinuta() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            val recetasFiltradas = minutas.filter { it.dia == diaSeleccionado } //filtra las recetas por dia seleccionado
+
+            Text(
+                text = "Recetas actuales: ${recetasFiltradas.size}",
+                style = MaterialTheme.typography.labelMedium
+            )
+
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(minutas.filter { it.dia == diaSeleccionado }) { receta ->
+                items(recetasFiltradas) { receta -> // Selector de dia
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()

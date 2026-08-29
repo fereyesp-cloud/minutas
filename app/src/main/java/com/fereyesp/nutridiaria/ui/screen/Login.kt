@@ -40,6 +40,12 @@ import android.os.Vibrator
 import android.media.ToneGenerator
 import com.fereyesp.nutridiaria.data.usuarios
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material3.Icon
+import androidx.compose.ui.graphics.Color
+import androidx.compose.foundation.layout.size
 
 /*
 * Pantalla de login, donde se valida las credenciales
@@ -62,13 +68,26 @@ fun Login(
     var mostrarError by remember { mutableStateOf(false) }
     val context = LocalContext.current
     /**
-     *Modal
+     *Modal de error
      */
 
     if (mostrarError) {
         AlertDialog(
             onDismissRequest = { mostrarError = false },
-            title = { Text("Error") },
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.Warning,
+                    contentDescription = "Error",
+                    tint = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.size(40.dp)
+                )
+            },
+            title = {
+                Text(
+                    text = "Error",
+                    color = MaterialTheme.colorScheme.error
+                )
+            },
             text = { Text(mensajeError) },
             confirmButton = {
                 TextButton(onClick = { mostrarError = false }) {

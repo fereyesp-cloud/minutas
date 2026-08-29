@@ -34,6 +34,12 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import android.media.AudioManager
 import android.media.ToneGenerator
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material3.Icon
+import androidx.compose.ui.graphics.Color
+
 
 /**
  * Pantalla recuperar contraseña
@@ -56,7 +62,20 @@ fun PantallaRegistro(irALogin: () -> Unit) {
     if (mostrarExito) {
         AlertDialog(
             onDismissRequest = { mostrarExito = false },
-            title = { Text("Registro exitoso") },
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.CheckCircle,
+                    contentDescription = "Éxito",
+                    tint = Color(0xFF2E7D32),
+                    modifier = Modifier.size(40.dp)
+                )
+            },
+            title = {
+                Text(
+                    text = "Solicitud enviada",
+                    color = Color(0xFF2E7D32)
+                )
+            },
             text = { Text("Tu cuenta ha sido registrada correctamente.") },
             confirmButton = {
                 TextButton(onClick = {
