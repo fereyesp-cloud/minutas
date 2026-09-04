@@ -1,5 +1,6 @@
 package com.fereyesp.nutridiaria.ui.screen
 
+import android.se.omapi.Session
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,11 +9,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -29,20 +35,61 @@ import androidx.compose.ui.unit.dp
 import com.fereyesp.nutridiaria.minutas
 
 
+
+
+
+
+
+
+
+
+
+
+
 /**
  * Pantalla de la visualizacion de la minuta
  */
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PantallaMinuta() {
+fun PantallaMinuta(
+    nombreUsuario: String,
+    onCerrarSession: () -> Unit,
+    irAMiPerfil: () -> Unit
+) {
 
     var diaSeleccionado by remember { mutableStateOf("Selecciona un día") }
+    var busquedaIngredientes by remember { mutableStateOf("") }
+    var menuExpandido by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Tu minuta semanal") },
+                actions = {
+                    IconButton(onClick = { menuExpandido = true }) {
+                        Icon(Icons.Filled.MoreVert, contentDescription = "Menú")
+                    }
+                    DropdownMenu(
+                        expanded = menuExpandido,
+                        onDismissRequest = { menuExpandido = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("Mi perfil") },
+                            onClick = {
+                                menuExpandido = false
+                                irAMiPerfil()
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Cerrar sesión") },
+                            onClick = {
+                                menuExpandido = false
+                                onCerrarSession()
+                            }
+                        )
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
                     titleContentColor = MaterialTheme.colorScheme.onPrimary
@@ -56,6 +103,14 @@ fun PantallaMinuta() {
                 .padding(innerPadding)
                 .padding(16.dp)
         ) {
+            Text(
+                text = "¡Bienvenido, $nombreUsuario!",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             SelectorDia(
                 diaSeleccionado = diaSeleccionado,
                 onDiaSeleccionado = { diaSeleccionado = it }
@@ -63,17 +118,39 @@ fun PantallaMinuta() {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            val recetasFiltradas = minutas.filter { it.dia == diaSeleccionado } //filtra las recetas por dia seleccionado
+            Text(
+                text = "Buscar receta",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = busquedaIngredientes,
+                onValueChange = { busquedaIngredientes = it },
+                label = { Text("Buscar por ingrediente") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+
+            val recetasFiltradas = minutas
+                .filter { it.dia == diaSeleccionado }
+                .filter { busquedaIngredientes.isEmpty() || it.contieneIngredientes(busquedaIngredientes) }
 
             Text(
                 text = "Recetas actuales: ${recetasFiltradas.size}",
                 style = MaterialTheme.typography.labelMedium
             )
 
+            Spacer(modifier = Modifier.height(8.dp))
+
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(recetasFiltradas) { receta -> // Selector de dia
+                items(recetasFiltradas) { receta ->
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -103,9 +180,7 @@ fun PantallaMinuta() {
                                 text = receta.ingredientes,
                                 style = MaterialTheme.typography.bodySmall
                             )
-
                             Spacer(modifier = Modifier.height(8.dp))
-
                             Text(
                                 text = "Preparación:",
                                 style = MaterialTheme.typography.labelMedium,
@@ -167,3 +242,6 @@ fun SelectorDia(
         }
     }
 }
+
+
+
