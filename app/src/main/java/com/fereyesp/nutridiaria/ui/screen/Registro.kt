@@ -1,5 +1,6 @@
 package com.fereyesp.nutridiaria.ui.screen
 
+import android.R
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,6 +38,7 @@ import android.media.ToneGenerator
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.ui.graphics.Color
 
@@ -54,6 +56,8 @@ fun PantallaRegistro(irALogin: () -> Unit) {
     var aceptaTerminos by remember { mutableStateOf(false) }
     var tipoUsuario by remember { mutableStateOf("Dueña de casa") }
     var mostrarExito by remember { mutableStateOf(false) }
+    var mensajeError by remember { mutableStateOf("") }
+    var mostrarErrorValidacion by remember { mutableStateOf(false) }
 
     /**
      * Modal de exito
@@ -82,6 +86,31 @@ fun PantallaRegistro(irALogin: () -> Unit) {
                     mostrarExito = false
                     irALogin()
                 }) {
+                    Text("Aceptar")
+                }
+            }
+        )
+    }
+
+    /**
+     * Modal de error
+     */
+
+    if (mostrarErrorValidacion) {
+        AlertDialog(
+            onDismissRequest =  {mostrarErrorValidacion = false},
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.Warning,
+                    contentDescription = "Error",
+                    tint = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.size(40.dp)
+                )
+            },
+            title = { Text("Error de validación", color = MaterialTheme.colorScheme.error)},
+            text = {Text(mensajeError)},
+            confirmButton = {
+                TextButton(onClick = {mostrarErrorValidacion = false}) {
                     Text("Aceptar")
                 }
             }
@@ -174,10 +203,24 @@ fun PantallaRegistro(irALogin: () -> Unit) {
 
             Button(
                 onClick = {
-                    val tono = ToneGenerator(AudioManager.STREAM_NOTIFICATION, 70)
-                    tono.startTone(ToneGenerator.TONE_PROP_ACK, 200)
+                    when {
+                            nombre.isBlank() || contrasena.isBlank() || contrasenaRepetida.isBlank() -> {
+                                mensajeError = "Todos los campos son obligatorios"
+                                mostrarErrorValidacion = true
+                            }
 
-                    mostrarExito = true},
+                            contrasena != contrasenaRepetida -> {
+                                mensajeError = "Las contraseñas no coinciden"
+                                mostrarErrorValidacion = true
+                            }
+                            else -> {
+                                val tono = ToneGenerator(AudioManager.STREAM_NOTIFICATION, 70)
+                                tono.startTone(ToneGenerator.TONE_PROP_ACK, 200)
+                                mostrarExito = true
+                            }
+                        }
+
+                    },
                 enabled = aceptaTerminos,
                 modifier = Modifier.fillMaxWidth()
             ) {

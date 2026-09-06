@@ -11,6 +11,9 @@ data class Minuta(
     val pasos: String,
     val recomendacionNutricional: String
 ) {
+
+    val  cantidadIngredientes: Int
+        get() = ingredientes.split(",").size
     fun contieneIngredientes(busqueda: String): Boolean  {
         return ingredientes.contains(busqueda,ignoreCase = true)
     }

@@ -62,6 +62,9 @@ fun PantallaMinuta(
     var busquedaIngredientes by remember { mutableStateOf("") }
     var menuExpandido by remember { mutableStateOf(false) }
 
+    val recetasConMuchosIngredientes = minutas.any { it.cantidadIngredientes > 5 }
+    val totalConAvena = minutas.count { it.contieneIngredientes("avena") }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -147,6 +150,7 @@ fun PantallaMinuta(
 
             Spacer(modifier = Modifier.height(8.dp))
 
+
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
@@ -180,6 +184,12 @@ fun PantallaMinuta(
                                 text = receta.ingredientes,
                                 style = MaterialTheme.typography.bodySmall
                             )
+
+                            Text(
+                                text =  "Cantidad de ingredenetes en la receta: ${receta.cantidadIngredientes}",
+                                style = MaterialTheme.typography.bodySmall
+                            )
+
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
                                 text = "Preparación:",
