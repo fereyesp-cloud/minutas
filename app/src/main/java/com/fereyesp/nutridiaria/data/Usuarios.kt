@@ -1,4 +1,5 @@
 package com.fereyesp.nutridiaria.data
+import androidx.compose.runtime.mutableStateListOf
 
 data class Usuarios(
     val nombre: String,
@@ -6,7 +7,7 @@ data class Usuarios(
     val contrasena: String
 )
 
-val usuarios = listOf(
+val usuarios = mutableStateListOf(
     Usuarios(nombre = "Fernando Hierro", usuario = "fernando", contrasena = "1234"),
     Usuarios(nombre = "Ricardo Rodrigues", usuario = "ricardo", contrasena = "1234"),
     Usuarios(nombre = "Gabriela Tapia", usuario = "gabriela", contrasena = "1234"),

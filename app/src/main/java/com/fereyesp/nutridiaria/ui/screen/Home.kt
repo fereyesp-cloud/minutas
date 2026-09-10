@@ -35,17 +35,6 @@ import androidx.compose.ui.unit.dp
 import com.fereyesp.nutridiaria.minutas
 
 
-
-
-
-
-
-
-
-
-
-
-
 /**
  * Pantalla de la visualizacion de la minuta
  */

@@ -49,6 +49,7 @@ fun PantallaRecuperar(irALogin: () -> Unit) {
     var mostrarExito by remember { mutableStateOf(false) }
     var mostrarError by remember { mutableStateOf(false) }
     var correo by remember { mutableStateOf("") }
+    var mensajeError by remember { mutableStateOf("") }
 
     /*
     /Modal de exito, usuario encontrado
@@ -84,8 +85,8 @@ fun PantallaRecuperar(irALogin: () -> Unit) {
     }
 
     /*
-    * Modal de error al no encontrar usuario
-    * */
+* Modal de error (usuario no encontrado o correo inválido)
+* */
     if (mostrarError) {
         AlertDialog(
             onDismissRequest = { mostrarError = false },
@@ -99,11 +100,11 @@ fun PantallaRecuperar(irALogin: () -> Unit) {
             },
             title = {
                 Text(
-                    text = "Usuario no encontrado",
+                    text = "Error",
                     color = MaterialTheme.colorScheme.error
                 )
             },
-            text = { Text("El nombre de usuario ingresado no existe en el sistema.") },
+            text = { Text(mensajeError) },
             confirmButton = {
                 TextButton(onClick = { mostrarError = false }) {
                     Text("Aceptar")
@@ -155,15 +156,23 @@ fun PantallaRecuperar(irALogin: () -> Unit) {
 
             Button(
                 onClick = {
-                    val usuarioEncontrado = usuarios.find {it.usuario == nombreUsuario}
 
-                    if (usuarioEncontrado != null){
-                        val tono = ToneGenerator(AudioManager.STREAM_NOTIFICATION, 70)
+                    val errorCorreo = validarCampo(correo, { it.esCorreoValido() }, "El correo no tiene un formato válido")
 
-                        tono.startTone(ToneGenerator.TONE_PROP_ACK, 200)
-                        mostrarExito = true
-                    } else {
+                    if (errorCorreo != null) {
+                        mensajeError  = errorCorreo
                         mostrarError = true
+                    } else {
+                        val usuarioEncontrado = usuarios.find {it.usuario == nombreUsuario}
+
+                        if (usuarioEncontrado != null){
+                            val tono = ToneGenerator(AudioManager.STREAM_NOTIFICATION, 70)
+                            tono.startTone(ToneGenerator.TONE_PROP_ACK, 200)
+                            mostrarExito = true
+                        } else {
+                            mensajeError  = "Usuario no encontrado"
+                            mostrarError = true
+                        }
                     }
 
                 },
@@ -179,4 +188,9 @@ fun PantallaRecuperar(irALogin: () -> Unit) {
             }
         }
     }
+}
+
+// //Funcion de extension para validar correo
+fun String.esCorreoValido(): Boolean {
+    return this.contains("@") && this.contains(".")
 }

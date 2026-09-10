@@ -154,19 +154,24 @@ fun Login(
 
                     if (usuarioEncontrado != null) {
                         // alerta auditiva
-                        val tono = ToneGenerator(AudioManager.STREAM_NOTIFICATION, 70)
-                        tono.startTone(ToneGenerator.TONE_PROP_ACK, 200)
+                        try {
+                            val tono = ToneGenerator(AudioManager.STREAM_NOTIFICATION, 70)
+                            tono.startTone(ToneGenerator.TONE_PROP_ACK, 200)
+                        } catch (e: Exception){
+                            e.printStackTrace()
+                        }
 
                         onIniciarSesion(usuarioEncontrado.nombre)
                     } else {
                         mensajeError = "Usuario no encontrado"
+                        try {
+                            val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+                            vibrator.vibrate(VibrationEffect.createOneShot(300, VibrationEffect.DEFAULT_AMPLITUDE))
+                        } catch (e: Exception){
+                            e.printStackTrace()
+                        }
                         mostrarError = true
 
-                        // vibración
-                        val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                        vibrator.vibrate(
-                            VibrationEffect.createOneShot(300, VibrationEffect.DEFAULT_AMPLITUDE)
-                        )
                     }
                 },
                 modifier = Modifier.fillMaxWidth()

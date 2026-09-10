@@ -41,6 +41,8 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.ui.graphics.Color
+import com.fereyesp.nutridiaria.data.Usuarios
+import com.fereyesp.nutridiaria.data.usuarios
 
 
 /**
@@ -58,6 +60,7 @@ fun PantallaRegistro(irALogin: () -> Unit) {
     var mostrarExito by remember { mutableStateOf(false) }
     var mensajeError by remember { mutableStateOf("") }
     var mostrarErrorValidacion by remember { mutableStateOf(false) }
+    var nombreUsuario by remember { mutableStateOf("") }
 
     /**
      * Modal de exito
@@ -146,6 +149,15 @@ fun PantallaRegistro(irALogin: () -> Unit) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            OutlinedTextField(
+                value = nombreUsuario,
+                onValueChange = { nombreUsuario = it },
+                label = { Text("Nombre de usuario") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             Text("Tipo de usuario", style = MaterialTheme.typography.labelLarge)
 
             Row(
@@ -203,22 +215,35 @@ fun PantallaRegistro(irALogin: () -> Unit) {
 
             Button(
                 onClick = {
-                    when {
-                            nombre.isBlank() || contrasena.isBlank() || contrasenaRepetida.isBlank() -> {
-                                mensajeError = "Todos los campos son obligatorios"
-                                mostrarErrorValidacion = true
-                            }
 
-                            contrasena != contrasenaRepetida -> {
-                                mensajeError = "Las contraseñas no coinciden"
+                            val errorNombre = validarCampo(nombre, {it.isNotBlank()}, "El nombre es obligatorio")
+                            val errorContrasena = validarCampo(contrasena, { it.length >= 4 }, "La contraseña debe tener al menos 4 caracteres")
+
+                            if(errorNombre != null) {
+                                mensajeError = errorNombre
                                 mostrarErrorValidacion = true
-                            }
-                            else -> {
+                            } else if(errorContrasena != null) {
+                              mensajeError = errorContrasena
+                              mostrarErrorValidacion = true
+                            } else if (contrasena != contrasenaRepetida) {
+
+                                mensajeError = "la contraseña no coinciden"
+                                mostrarErrorValidacion = true
+
+                            } else  {
+                                val nuevoUsuario = Usuarios(
+                                    nombre = nombre,
+                                    usuario = nombreUsuario,
+                                    contrasena = contrasena
+                                )
+
+                                usuarios.add(nuevoUsuario)
+
                                 val tono = ToneGenerator(AudioManager.STREAM_NOTIFICATION, 70)
                                 tono.startTone(ToneGenerator.TONE_PROP_ACK, 200)
                                 mostrarExito = true
                             }
-                        }
+
 
                     },
                 enabled = aceptaTerminos,
@@ -235,3 +260,11 @@ fun PantallaRegistro(irALogin: () -> Unit) {
         }
     }
 }
+
+
+
+// Funciona para validar campos
+fun validarCampo(valor: String, reglaValidacion: (String) -> Boolean, mensajeError: String): String? {
+    return if (!reglaValidacion(valor)) mensajeError else null
+}
+
