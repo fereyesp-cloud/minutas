@@ -11,10 +11,14 @@ data class Minuta(
     val pasos: String,
     val recomendacionNutricional: String
 ) {
-
-    val  cantidadIngredientes: Int
-        get() = ingredientes.split(",").size
-    fun contieneIngredientes(busqueda: String): Boolean  {
-        return ingredientes.contains(busqueda,ignoreCase = true)
+    private fun normalizar(texto: String): String {
+        return texto.trim().lowercase()
     }
+
+    fun contieneIngredientes(busqueda: String): Boolean {
+        return normalizar(ingredientes).contains(normalizar(busqueda))
+    }
+
+    val cantidadIngredientes: Int
+        get() = ingredientes.split(",").size
 }

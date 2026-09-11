@@ -15,7 +15,7 @@ import com.fereyesp.nutridiaria.ui.theme.NutriDiariaTheme
 import com.fereyesp.nutridiaria.ui.screen.NutriDiarioApp
 
 
-val minutas = listOf(
+val minutas = arrayOf(
     Minuta(
         dia = "Lunes",
         titulo = "Avena trasnochada con frutos rojos y chía",
