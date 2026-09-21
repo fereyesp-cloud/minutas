@@ -44,6 +44,8 @@ import androidx.compose.ui.graphics.Color
 import com.fereyesp.nutridiaria.data.Usuarios
 import com.fereyesp.nutridiaria.data.usuarios
 import androidx.compose.material3.Switch
+import com.fereyesp.nutridiaria.ui.screen.reproducirTonoExito
+import com.fereyesp.nutridiaria.ui.screen.vibrarError
 
 
 /**
@@ -255,8 +257,7 @@ fun PantallaRegistro(irALogin: () -> Unit) {
 
                                 usuarios.add(nuevoUsuario)
 
-                                val tono = ToneGenerator(AudioManager.STREAM_NOTIFICATION, 70)
-                                tono.startTone(ToneGenerator.TONE_PROP_ACK, 200)
+                                reproducirTonoExito()
                                 mostrarExito = true
                             }
 

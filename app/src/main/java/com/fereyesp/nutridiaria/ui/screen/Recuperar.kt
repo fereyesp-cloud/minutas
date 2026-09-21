@@ -36,6 +36,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.ui.graphics.Color
 import com.fereyesp.nutridiaria.data.usuarios
 import androidx.compose.material.icons.filled.Warning
+import com.fereyesp.nutridiaria.ui.screen.reproducirTonoExito
+import com.fereyesp.nutridiaria.ui.screen.vibrarError
+import android.content.Context
 
 /*
 * Pantalla para recuperar usuario
@@ -166,8 +169,7 @@ fun PantallaRecuperar(irALogin: () -> Unit) {
                         val usuarioEncontrado = usuarios.find {it.usuario == nombreUsuario}
 
                         if (usuarioEncontrado != null){
-                            val tono = ToneGenerator(AudioManager.STREAM_NOTIFICATION, 70)
-                            tono.startTone(ToneGenerator.TONE_PROP_ACK, 200)
+                            reproducirTonoExito()
                             mostrarExito = true
                         } else {
                             mensajeError  = "Usuario no encontrado"

@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material3.Button
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PantallaReceta(

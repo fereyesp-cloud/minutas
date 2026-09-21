@@ -46,6 +46,8 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Icon
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.size
+import com.fereyesp.nutridiaria.ui.screen.reproducirTonoExito
+import com.fereyesp.nutridiaria.ui.screen.vibrarError
 
 /*
 * Pantalla de login, donde se valida las credenciales
@@ -153,23 +155,13 @@ fun Login(
                     }
 
                     if (usuarioEncontrado != null) {
-                        // alerta auditiva
-                        try {
-                            val tono = ToneGenerator(AudioManager.STREAM_NOTIFICATION, 70)
-                            tono.startTone(ToneGenerator.TONE_PROP_ACK, 200)
-                        } catch (e: Exception){
-                            e.printStackTrace()
-                        }
-
+                        // alerta auditiva exito
+                        reproducirTonoExito()
                         onIniciarSesion(usuarioEncontrado.nombre)
                     } else {
+                        // alerta aduditiva error
                         mensajeError = "Usuario no encontrado"
-                        try {
-                            val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-                            vibrator.vibrate(VibrationEffect.createOneShot(300, VibrationEffect.DEFAULT_AMPLITUDE))
-                        } catch (e: Exception){
-                            e.printStackTrace()
-                        }
+                        vibrarError(context)
                         mostrarError = true
 
                     }
