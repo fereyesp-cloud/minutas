@@ -1,6 +1,6 @@
 package com.fereyesp.nutridiaria.ui.screen
 
-import android.R
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -43,6 +43,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.ui.graphics.Color
 import com.fereyesp.nutridiaria.data.Usuarios
 import com.fereyesp.nutridiaria.data.usuarios
+import androidx.compose.material3.Switch
 
 
 /**
@@ -61,6 +62,7 @@ fun PantallaRegistro(irALogin: () -> Unit) {
     var mensajeError by remember { mutableStateOf("") }
     var mostrarErrorValidacion by remember { mutableStateOf(false) }
     var nombreUsuario by remember { mutableStateOf("") }
+    var recibirNotificaciones by remember { mutableStateOf(true) }
 
     /**
      * Modal de exito
@@ -212,6 +214,20 @@ fun PantallaRegistro(irALogin: () -> Unit) {
             }
 
             Spacer(modifier = Modifier.height(24.dp))
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = "Recibir notificaciones de nuevas recetas",
+                    modifier = Modifier.weight(1f)   // para que el texto no empuje el switch fuera de pantalla
+                )
+                Switch(
+                    checked = recibirNotificaciones,
+                    onCheckedChange = { recibirNotificaciones = it }
+                )
+            }
 
             Button(
                 onClick = {

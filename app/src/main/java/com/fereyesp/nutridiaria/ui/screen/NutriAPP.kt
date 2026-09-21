@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
+import android.net.Uri
 
 @Composable
 fun NutriDiarioApp() {
@@ -42,12 +43,13 @@ fun NutriDiarioApp() {
                 nombreUsuario = nombre,
                 onCerrarSession = {
                     navController.navigate("login") {
-                        popUpTo("Login") {inclusive = true}
+                        popUpTo("login") {inclusive = true}
                     }
                 },
                 irAMiPerfil = {
                     navController.navigate("perfil/$nombre")
-                }
+                },
+                irAReceta = { titulo -> navController.navigate("receta/${Uri.encode(titulo)}") }
             )
         }
         composable(
@@ -59,6 +61,16 @@ fun NutriDiarioApp() {
             MiPerfil(
                 nombreUsuario = nombre,
                 irAtras = {navController.popBackStack()}
+            )
+        }
+        composable(
+            route = "receta/{titulo}",
+            arguments = listOf(navArgument("titulo") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val titulo = backStackEntry.arguments?.getString("titulo") ?: ""
+            PantallaReceta(
+                tituloReceta = titulo,
+                irAtras = { navController.popBackStack() }
             )
         }
     }

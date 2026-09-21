@@ -1,6 +1,7 @@
 package com.fereyesp.nutridiaria.ui.screen
 
-import android.se.omapi.Session
+
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.fereyesp.nutridiaria.minutas
+import java.time.LocalTime
 
 
 /**
@@ -44,12 +46,15 @@ import com.fereyesp.nutridiaria.minutas
 fun PantallaMinuta(
     nombreUsuario: String,
     onCerrarSession: () -> Unit,
-    irAMiPerfil: () -> Unit
+    irAMiPerfil: () -> Unit,
+    irAReceta: (String) -> Unit
 ) {
 
     var diaSeleccionado by remember { mutableStateOf("Selecciona un día") }
     var busquedaIngredientes by remember { mutableStateOf("") }
     var menuExpandido by remember { mutableStateOf(false) }
+
+    val momentoActual = obtenerMomentoDelDia()
 
     val recetasConMuchosIngredientes = minutas.any { it.cantidadIngredientes > 5 }
     val totalConAvena = minutas.count { it.contieneIngredientes("avena") }
@@ -139,6 +144,12 @@ fun PantallaMinuta(
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            Text(
+                text = "Sugerencia según la hora: $momentoActual",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
@@ -148,6 +159,7 @@ fun PantallaMinuta(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 8.dp)
+                            .clickable{irAReceta(receta.titulo)}
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
                             Text(
@@ -164,31 +176,7 @@ fun PantallaMinuta(
                                 style = MaterialTheme.typography.bodySmall
                             )
                             Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = "Ingredientes:",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                            Text(
-                                text = receta.ingredientes,
-                                style = MaterialTheme.typography.bodySmall
-                            )
 
-                            Text(
-                                text =  "Cantidad de ingredenetes en la receta: ${receta.cantidadIngredientes}",
-                                style = MaterialTheme.typography.bodySmall
-                            )
-
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = "Preparación:",
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                            Text(
-                                text = receta.pasos,
-                                style = MaterialTheme.typography.bodySmall
-                            )
                         }
                     }
                 }
@@ -242,5 +230,18 @@ fun SelectorDia(
     }
 }
 
+/*
+* Logica para obtener la hora
+* */
+
+fun obtenerMomentoDelDia(): String {
+    val hora = LocalTime.now().hour
+    return  when (hora){
+        in 6..10 -> "Desayuno"
+        in 11..15 -> "Almuerzo"
+        in 16..19 -> "Once"
+        else -> "Cena"
+    }
+}
 
 
