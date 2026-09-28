@@ -1,10 +1,12 @@
 package com.fereyesp.nutridiaria.data
 
-/**
- * Busqueda de receta
- */
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
+@Entity(tableName = "minutas")
 data class Minuta(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
     val dia: String,
     val titulo: String,
     val ingredientes: String,

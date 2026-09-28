@@ -48,6 +48,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.size
 import com.fereyesp.nutridiaria.ui.screen.reproducirTonoExito
 import com.fereyesp.nutridiaria.ui.screen.vibrarError
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
+import com.fereyesp.nutridiaria.data.AppDatabase
 
 /*
 * Pantalla de login, donde se valida las credenciales
@@ -69,6 +72,9 @@ fun Login(
     var mensajeError by remember { mutableStateOf(value = "") }
     var mostrarError by remember { mutableStateOf(false) }
     val context = LocalContext.current
+
+    val db = remember { AppDatabase.obtenerInstancia(context) }
+    val scope = rememberCoroutineScope()
     /**
      *Modal de error
      */
@@ -150,20 +156,17 @@ fun Login(
 
             Button(
                 onClick = {
-                    val usuarioEncontrado = usuarios.find {
-                        it.usuario == usuario && it.contrasena == contrasena
-                    }
+                    scope.launch {
+                        val usuarioEncontrado = db.usuarioDao().buscarPorCredenciales(usuario,  contrasena)
 
-                    if (usuarioEncontrado != null) {
-                        // alerta auditiva exito
-                        reproducirTonoExito()
-                        onIniciarSesion(usuarioEncontrado.nombre)
-                    } else {
-                        // alerta aduditiva error
-                        mensajeError = "Usuario no encontrado"
-                        vibrarError(context)
-                        mostrarError = true
-
+                        if (usuarioEncontrado != null){
+                            reproducirTonoExito()
+                            onIniciarSesion(usuarioEncontrado.nombre)
+                        } else {
+                            mensajeError = "Usuario no encontrado"
+                            vibrarError(context)
+                            mostrarError = true
+                        }
                     }
                 },
                 modifier = Modifier.fillMaxWidth()

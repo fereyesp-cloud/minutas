@@ -35,6 +35,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.fereyesp.nutridiaria.minutas
 import java.time.LocalTime
+import androidx.compose.runtime.LaunchedEffect
+import com.fereyesp.nutridiaria.data.AppDatabase
+import androidx.compose.ui.platform.LocalContext
+import com.fereyesp.nutridiaria.data.Minuta
 
 
 /**
@@ -49,6 +53,14 @@ fun PantallaMinuta(
     irAMiPerfil: () -> Unit,
     irAReceta: (String) -> Unit
 ) {
+    val context = LocalContext.current
+    val db = remember { AppDatabase.obtenerInstancia(context) }
+
+    var todasLasMinutas by remember { mutableStateOf<List<Minuta>>(emptyList()) }
+
+    LaunchedEffect(Unit) {
+        todasLasMinutas = db.minutaDao().obtenerTodas()
+    }
 
     var diaSeleccionado by remember { mutableStateOf("Selecciona un día") }
     var busquedaIngredientes by remember { mutableStateOf("") }
@@ -56,8 +68,8 @@ fun PantallaMinuta(
 
     val momentoActual = obtenerMomentoDelDia()
 
-    val recetasConMuchosIngredientes = minutas.any { it.cantidadIngredientes > 5 }
-    val totalConAvena = minutas.count { it.contieneIngredientes("avena") }
+    val recetasConMuchosIngredientes = todasLasMinutas.any { it.cantidadIngredientes > 5 }
+    val totalConAvena = todasLasMinutas.count { it.contieneIngredientes("avena") }
 
     Scaffold(
         topBar = {
@@ -133,7 +145,7 @@ fun PantallaMinuta(
             Spacer(modifier = Modifier.height(16.dp))
 
 
-            val recetasFiltradas = minutas
+            val recetasFiltradas = todasLasMinutas
                 .filter { it.dia == diaSeleccionado }
                 .filter { busquedaIngredientes.isEmpty() || it.contieneIngredientes(busquedaIngredientes) }
 

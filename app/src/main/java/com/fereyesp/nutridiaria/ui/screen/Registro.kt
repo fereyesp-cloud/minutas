@@ -46,6 +46,10 @@ import com.fereyesp.nutridiaria.data.usuarios
 import androidx.compose.material3.Switch
 import com.fereyesp.nutridiaria.ui.screen.reproducirTonoExito
 import com.fereyesp.nutridiaria.ui.screen.vibrarError
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
+import com.fereyesp.nutridiaria.data.AppDatabase
 
 
 /**
@@ -65,6 +69,9 @@ fun PantallaRegistro(irALogin: () -> Unit) {
     var mostrarErrorValidacion by remember { mutableStateOf(false) }
     var nombreUsuario by remember { mutableStateOf("") }
     var recibirNotificaciones by remember { mutableStateOf(true) }
+    val context = LocalContext.current
+    val db = remember { AppDatabase.obtenerInstancia(context) }
+    val scope = rememberCoroutineScope()
 
     /**
      * Modal de exito
@@ -249,19 +256,19 @@ fun PantallaRegistro(irALogin: () -> Unit) {
                                 mostrarErrorValidacion = true
 
                             } else  {
-                                val nuevoUsuario = Usuarios(
-                                    nombre = nombre,
-                                    usuario = nombreUsuario,
-                                    contrasena = contrasena
-                                )
+                               scope.launch {
+                                   val nuevoUsuario = Usuarios(
+                                       nombre = nombre,
+                                       usuario = nombreUsuario,
+                                       contrasena = contrasena
+                                   )
 
-                                usuarios.add(nuevoUsuario)
+                                   db.usuarioDao().insertar(nuevoUsuario)
 
-                                reproducirTonoExito()
-                                mostrarExito = true
+                                   reproducirTonoExito()
+                                   mostrarExito = true
+                               }
                             }
-
-
                     },
                 enabled = aceptaTerminos,
                 modifier = Modifier.fillMaxWidth()

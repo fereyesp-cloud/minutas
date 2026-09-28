@@ -15,11 +15,17 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.fereyesp.nutridiaria.minutas
+import com.fereyesp.nutridiaria.data.Minuta
 import android.content.Intent
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.material3.Button
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.fereyesp.nutridiaria.data.AppDatabase
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -28,8 +34,14 @@ fun PantallaReceta(
     tituloReceta: String,
     irAtras: () -> Unit
 ){
-    val receta = minutas.find {it.titulo == tituloReceta}
     val context = LocalContext.current
+    val db = remember { AppDatabase.obtenerInstancia(context) }
+
+    var receta by remember { mutableStateOf<Minuta?>(null) }
+
+    LaunchedEffect(tituloReceta) {
+        receta = db.minutaDao().buscarPorTitulo(tituloReceta)
+    }
 
     Scaffold(
         topBar = {
@@ -51,19 +63,19 @@ fun PantallaReceta(
                 .padding(innerPadding)
                 .padding(16.dp)
         ) {
-            if (receta != null) {
-                Text(text = receta.dia, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
-                Text(text = receta.titulo, style = MaterialTheme.typography.titleLarge)
+            receta?.let { recetaActual ->
+                Text(text = recetaActual.dia, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
+                Text(text = recetaActual.titulo, style = MaterialTheme.typography.titleLarge)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(text = receta.recomendacionNutricional, style = MaterialTheme.typography.bodyMedium)
+                Text(text = recetaActual.recomendacionNutricional, style = MaterialTheme.typography.bodyMedium)
 
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(text = "Ingredientes:", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
-                Text(text = receta.ingredientes, style = MaterialTheme.typography.bodyMedium)
+                Text(text = recetaActual.ingredientes, style = MaterialTheme.typography.bodyMedium)
 
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(text = "Preparación:", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
-                Text(text = receta.pasos, style = MaterialTheme.typography.bodyMedium)
+                Text(text = recetaActual.pasos, style = MaterialTheme.typography.bodyMedium)
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -73,9 +85,9 @@ fun PantallaReceta(
                             type = "text/plain"
                             putExtra(
                                 Intent.EXTRA_TEXT,
-                                "Receta: ${receta.titulo}\n\n" +
-                                        "Ingredientes: ${receta.ingredientes}\n\n" +
-                                        "Preparación: ${receta.pasos}"
+                                "Receta: ${recetaActual.titulo}\n\n" +
+                                        "Ingredientes: ${recetaActual.ingredientes}\n\n" +
+                                        "Preparación: ${recetaActual.pasos}"
                             )
                         }
                         context.startActivity(Intent.createChooser(intent, "Compartir receta"))
@@ -84,13 +96,9 @@ fun PantallaReceta(
                 ) {
                     Text("Compartir receta")
                 }
-            } else {
-                Text("No se encontro la receta")
-            }
+            } ?: Text("No se encontró la receta")
 
             Spacer(modifier = Modifier.height(24.dp))
-
-
             TextButton(onClick = irAtras) {
                 Text("Volver")
             }

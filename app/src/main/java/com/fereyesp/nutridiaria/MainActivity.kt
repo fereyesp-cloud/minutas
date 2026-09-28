@@ -13,6 +13,9 @@ import com.fereyesp.nutridiaria.data.Minuta
 import com.fereyesp.nutridiaria.ui.theme.NutriDiariaTheme
 
 import com.fereyesp.nutridiaria.ui.screen.NutriDiarioApp
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import com.fereyesp.nutridiaria.data.AppDatabase
 
 
 val minutas = arrayOf(
@@ -134,11 +137,20 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val db = AppDatabase.obtenerInstancia(applicationContext)
+
+        lifecycleScope.launch {
+            val minutasExistentes = db.minutaDao().obtenerTodas()
+            if (minutasExistentes.isEmpty()) {
+                db.minutaDao().insertarTodas(minutas.toList())
+            }
+        }
+
         setContent {
             NutriDiariaTheme {
                 NutriDiarioApp()
             }
-
         }
     }
 }

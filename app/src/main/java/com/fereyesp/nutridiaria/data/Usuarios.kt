@@ -1,11 +1,18 @@
 package com.fereyesp.nutridiaria.data
 import androidx.compose.runtime.mutableStateListOf
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "usuarios")
 data class Usuarios(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
     val nombre: String,
     val usuario: String,
     val contrasena: String
 )
+
 
 val usuarios = mutableStateListOf(
     Usuarios(nombre = "Fernando Hierro", usuario = "fernando", contrasena = "1234"),
