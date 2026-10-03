@@ -1,9 +1,6 @@
 package com.fereyesp.nutridiaria.ui.screen
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.media.AudioManager
-import android.os.VibrationEffect
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,21 +33,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.fereyesp.nutridiaria.R
 import androidx.compose.ui.platform.LocalContext
-import android.os.Vibrator
-import android.media.ToneGenerator
-import com.fereyesp.nutridiaria.data.usuarios
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Icon
-import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.size
-import com.fereyesp.nutridiaria.ui.screen.reproducirTonoExito
-import com.fereyesp.nutridiaria.ui.screen.vibrarError
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
-import com.fereyesp.nutridiaria.data.AppDatabase
+import com.fereyesp.nutridiaria.local.AppDatabase
+import com.fereyesp.nutridiaria.preferences.SesionPreferences
 
 /*
 * Pantalla de login, donde se valida las credenciales
@@ -64,7 +55,7 @@ fun Login(
     irARegistro: () -> Unit,
     irARecuperar: () -> Unit,
     irAMinuta: () -> Unit,
-    onIniciarSesion: (String) -> Unit
+    onIniciarSesion: (String, Boolean) -> Unit
 ) {
 
     var usuario by remember { mutableStateOf("") }
@@ -161,7 +152,9 @@ fun Login(
 
                         if (usuarioEncontrado != null){
                             reproducirTonoExito()
-                            onIniciarSesion(usuarioEncontrado.nombre)
+                            val sesion = SesionPreferences(context)
+                            sesion.guardarSesion(usuarioEncontrado.nombre, usuarioEncontrado.esAdmin)
+                            onIniciarSesion(usuarioEncontrado.nombre, usuarioEncontrado.esAdmin)
                         } else {
                             mensajeError = "Usuario no encontrado"
                             vibrarError(context)

@@ -33,23 +33,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.AlertDialog
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import android.media.AudioManager
-import android.media.ToneGenerator
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.ui.graphics.Color
-import com.fereyesp.nutridiaria.data.Usuarios
-import com.fereyesp.nutridiaria.data.usuarios
+import com.fereyesp.nutridiaria.local.Usuarios
 import androidx.compose.material3.Switch
-import com.fereyesp.nutridiaria.ui.screen.reproducirTonoExito
-import com.fereyesp.nutridiaria.ui.screen.vibrarError
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
-import com.fereyesp.nutridiaria.data.AppDatabase
+import com.fereyesp.nutridiaria.local.AppDatabase
 
 
 /**

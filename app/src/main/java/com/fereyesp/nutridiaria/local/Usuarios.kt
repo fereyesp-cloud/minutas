@@ -1,4 +1,4 @@
-package com.fereyesp.nutridiaria.data
+package com.fereyesp.nutridiaria.local
 import androidx.compose.runtime.mutableStateListOf
 
 import androidx.room.Entity
@@ -10,7 +10,8 @@ data class Usuarios(
     val id: Int = 0,
     val nombre: String,
     val usuario: String,
-    val contrasena: String
+    val contrasena: String,
+    val esAdmin: Boolean = false
 )
 
 

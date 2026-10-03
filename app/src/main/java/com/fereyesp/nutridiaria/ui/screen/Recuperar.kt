@@ -27,18 +27,13 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardType
-import android.media.AudioManager
-import android.media.ToneGenerator
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.Icon
 import androidx.compose.ui.graphics.Color
-import com.fereyesp.nutridiaria.data.usuarios
+import com.fereyesp.nutridiaria.local.usuarios
 import androidx.compose.material.icons.filled.Warning
-import com.fereyesp.nutridiaria.ui.screen.reproducirTonoExito
-import com.fereyesp.nutridiaria.ui.screen.vibrarError
-import android.content.Context
 
 /*
 * Pantalla para recuperar usuario

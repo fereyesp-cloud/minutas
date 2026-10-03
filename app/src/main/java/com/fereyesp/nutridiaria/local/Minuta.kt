@@ -1,4 +1,4 @@
-package com.fereyesp.nutridiaria.data
+package com.fereyesp.nutridiaria.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

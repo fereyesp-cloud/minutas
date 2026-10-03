@@ -15,7 +15,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.fereyesp.nutridiaria.data.usuarios
+import com.fereyesp.nutridiaria.local.usuarios
 
 /**
  * Pantalla de perfil de usuario logueado

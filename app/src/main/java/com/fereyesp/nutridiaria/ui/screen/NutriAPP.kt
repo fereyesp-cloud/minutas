@@ -7,10 +7,29 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import android.net.Uri
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import com.fereyesp.nutridiaria.preferences.SesionPreferences
+
 
 @Composable
 fun NutriDiarioApp() {
     val navController = rememberNavController()
+    val context = LocalContext.current
+    val sesion = remember { SesionPreferences(context) }
+
+    val nombreGuardado = sesion.obtenerNombreUsuario()
+    var esAdminActual by remember { mutableStateOf(sesion.esAdmin()) }
+
+    val destinoInicial = if (nombreGuardado != null) {
+        "minuta/$nombreGuardado"
+    } else {
+        "login"
+    }
 
     NavHost(
         navController = navController,
@@ -21,7 +40,10 @@ fun NutriDiarioApp() {
                 irARegistro = { navController.navigate("registro") },
                 irARecuperar = { navController.navigate("recuperar") },
                 irAMinuta = {},
-                onIniciarSesion = { nombre -> navController.navigate("minuta/$nombre") }
+                onIniciarSesion = { nombre, esAdmin ->
+                    esAdminActual = esAdmin
+                    navController.navigate("minuta/$nombre")
+                }
             )
         }
         composable("registro") {
@@ -41,7 +63,9 @@ fun NutriDiarioApp() {
             val nombre = backStackEntry.arguments?.getString("nombre") ?: ""
             PantallaMinuta(
                 nombreUsuario = nombre,
+                esAdmin = esAdminActual,
                 onCerrarSession = {
+                    sesion.cerrarSesion()
                     navController.navigate("login") {
                         popUpTo("login") {inclusive = true}
                     }
@@ -49,7 +73,10 @@ fun NutriDiarioApp() {
                 irAMiPerfil = {
                     navController.navigate("perfil/$nombre")
                 },
-                irAReceta = { titulo -> navController.navigate("receta/${Uri.encode(titulo)}") }
+                irAReceta = { titulo -> navController.navigate("receta/${Uri.encode(titulo)}") },
+                irAAdmin = {
+                    navController.navigate("admin")
+                }
             )
         }
         composable(
@@ -70,6 +97,11 @@ fun NutriDiarioApp() {
             val titulo = backStackEntry.arguments?.getString("titulo") ?: ""
             PantallaReceta(
                 tituloReceta = titulo,
+                irAtras = { navController.popBackStack() }
+            )
+        }
+        composable("admin") {
+            PantallaAdmin(
                 irAtras = { navController.popBackStack() }
             )
         }

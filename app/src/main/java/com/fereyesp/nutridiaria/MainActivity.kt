@@ -7,15 +7,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 
-import androidx.compose.material3.ExperimentalMaterial3Api
-
-import com.fereyesp.nutridiaria.data.Minuta
+import com.fereyesp.nutridiaria.local.Minuta
 import com.fereyesp.nutridiaria.ui.theme.NutriDiariaTheme
 
 import com.fereyesp.nutridiaria.ui.screen.NutriDiarioApp
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
-import com.fereyesp.nutridiaria.data.AppDatabase
+import com.fereyesp.nutridiaria.local.AppDatabase
+import com.fereyesp.nutridiaria.local.Usuarios
 
 
 val minutas = arrayOf(
@@ -144,6 +143,19 @@ class MainActivity : ComponentActivity() {
             val minutasExistentes = db.minutaDao().obtenerTodas()
             if (minutasExistentes.isEmpty()) {
                 db.minutaDao().insertarTodas(minutas.toList())
+            }
+
+            // Usuario admin
+            val adminExistente = db.usuarioDao().buscarPorUsuario("admin")
+            if (adminExistente == null) {
+                db.usuarioDao().insertar(
+                    Usuarios(
+                        nombre = "Administrador",
+                        usuario = "admin",
+                        contrasena = "admin123",
+                        esAdmin = true
+                    )
+                )
             }
         }
 

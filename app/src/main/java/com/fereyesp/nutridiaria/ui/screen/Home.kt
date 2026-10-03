@@ -33,12 +33,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.fereyesp.nutridiaria.minutas
 import java.time.LocalTime
 import androidx.compose.runtime.LaunchedEffect
-import com.fereyesp.nutridiaria.data.AppDatabase
+import com.fereyesp.nutridiaria.local.AppDatabase
 import androidx.compose.ui.platform.LocalContext
-import com.fereyesp.nutridiaria.data.Minuta
+import com.fereyesp.nutridiaria.local.Minuta
 
 
 /**
@@ -49,9 +48,11 @@ import com.fereyesp.nutridiaria.data.Minuta
 @Composable
 fun PantallaMinuta(
     nombreUsuario: String,
+    esAdmin: Boolean,
     onCerrarSession: () -> Unit,
     irAMiPerfil: () -> Unit,
-    irAReceta: (String) -> Unit
+    irAReceta: (String) -> Unit,
+    irAAdmin: () -> Unit
 ) {
     val context = LocalContext.current
     val db = remember { AppDatabase.obtenerInstancia(context) }
@@ -97,6 +98,16 @@ fun PantallaMinuta(
                                 onCerrarSession()
                             }
                         )
+
+                        if (esAdmin) {
+                            DropdownMenuItem(
+                                text = {Text("Administador usuarios")},
+                                onClick = {
+                                    menuExpandido = false
+                                    irAAdmin()
+                                }
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -235,6 +246,7 @@ fun SelectorDia(
                     onClick = {
                         onDiaSeleccionado(dia)
                         expandido = false
+
                     }
                 )
             }

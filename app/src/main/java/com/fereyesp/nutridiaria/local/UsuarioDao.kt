@@ -1,8 +1,10 @@
-package com.fereyesp.nutridiaria.data
+package com.fereyesp.nutridiaria.local
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
+import androidx.room.Delete
 
 @Dao
 interface UsuarioDao {
@@ -18,4 +20,10 @@ interface UsuarioDao {
 
     @Query("SELECT * FROM usuarios WHERE usuario = :nombreUsuario LIMIT 1")
     suspend fun buscarPorUsuario(nombreUsuario: String): Usuarios?
+
+    @Update
+    suspend fun actualizar(usuario: Usuarios)
+
+    @Delete
+    suspend fun eliminar(usuario: Usuarios)
 }

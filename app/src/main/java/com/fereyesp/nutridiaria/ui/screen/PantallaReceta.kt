@@ -15,7 +15,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.fereyesp.nutridiaria.data.Minuta
+import com.fereyesp.nutridiaria.local.Minuta
 import android.content.Intent
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.ui.platform.LocalContext
@@ -25,7 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.fereyesp.nutridiaria.data.AppDatabase
+import com.fereyesp.nutridiaria.local.AppDatabase
 
 
 @OptIn(ExperimentalMaterial3Api::class)
